@@ -1,4 +1,6 @@
 const AWS = require('aws-sdk');
+const ora = require('ora');
+let child = require('child_process')
 
 /**
  * 
@@ -62,3 +64,22 @@ module.exports.validatePackageVersion = (val) => {
 module.exports.checkAndFindVersion = (CLI_ARGS) => {
   return CLI_ARGS.includes("version")? CLI_ARGS[CLI_ARGS.indexOf("version")+1]?? false : false;
 }
+
+module.exports.runCommand = (cmd, args, message) => {
+  const spinner = ora(message)
+  spinner.green = 'cyan';
+  spinner.indent = 2;
+  spinner.spinner = 'clock'
+  
+  return new Promise((resolve, reject) => {
+      const spawn = child.spawn
+      const command = spawn(cmd, args);
+      spinner.start()
+      command.on("close", _ => {
+          resolve({spinner})
+      });
+      command.on("error", err => {
+          reject({spinner, err});
+      });
+  });
+};

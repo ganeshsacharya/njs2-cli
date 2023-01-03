@@ -2,7 +2,7 @@
 const child_process = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const { checkAndFindVersion } = require('./utils');
+const { checkAndFindVersion, runCommand } = require('./utils');
 
 const execute = async (CLI_KEYS, CLI_ARGS) => {
   try {
@@ -25,15 +25,18 @@ const execute = async (CLI_KEYS, CLI_ARGS) => {
     }
 
     child_process.execSync(`mkdir ${PROJECT_NAME} && cd ${PROJECT_NAME} && npm init -y`, { stdio: 'inherit' });
-    child_process.execSync(`cd ${PROJECT_NAME} && npm i @njs2/base@${BASE_VERSION}`, { stdio: 'inherit' });
-    const dependencies = require(`${path.resolve(process.cwd(), `${PROJECT_NAME}/package.json`)}`).dependencies;
-    child_process.execSync(`cd ${PROJECT_NAME} && cp -rf ./node_modules/@njs2/base/template/frameworkStructure/. .`, { stdio: 'inherit' });
-    let packageJson = JSON.parse(fs.readFileSync(`${path.resolve(process.cwd(), `${PROJECT_NAME}/package.json`)}`, 'utf8'));
-    packageJson['njs2-type'] = 'project';
-    packageJson['name'] = PROJECT_NAME;
-    packageJson['dependencies'] = dependencies;
-    fs.writeFileSync(`${path.resolve(process.cwd(), `${PROJECT_NAME}/package.json`)}`, JSON.stringify(packageJson, null, 2));
-    child_process.execSync(`cd ${PROJECT_NAME} && npm i`, { stdio: 'inherit' });
+
+    runCommand(`mkdir ${PROJECT_NAME} && cd ${PROJECT_NAME} && npm init -y`, [], "Initiating New project")
+
+    // child_process.execSync(`cd ${PROJECT_NAME} && npm i @njs2/base@${BASE_VERSION}`, { stdio: 'inherit' });
+    // const dependencies = require(`${path.resolve(process.cwd(), `${PROJECT_NAME}/package.json`)}`).dependencies;
+    // child_process.execSync(`cd ${PROJECT_NAME} && cp -rf ./node_modules/@njs2/base/template/frameworkStructure/. .`, { stdio: 'inherit' });
+    // let packageJson = JSON.parse(fs.readFileSync(`${path.resolve(process.cwd(), `${PROJECT_NAME}/package.json`)}`, 'utf8'));
+    // packageJson['njs2-type'] = 'project';
+    // packageJson['name'] = PROJECT_NAME;
+    // packageJson['dependencies'] = dependencies;
+    // fs.writeFileSync(`${path.resolve(process.cwd(), `${PROJECT_NAME}/package.json`)}`, JSON.stringify(packageJson, null, 2));
+    // child_process.execSync(`cd ${PROJECT_NAME} && npm i`, { stdio: 'inherit' });
   } catch (e) {
     console.error(e);
   }
